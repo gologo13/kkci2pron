@@ -9,9 +9,8 @@ use WordkkciConverter;
 use KKCIConverter;
 use PhonemeConverter;
 
-my $KYFD_PATH = "/usr/local/bin/kyfd";
 my $DEBUG = 0;
-
+my $KYFD_PATH = "/usr/local/bin/kyfd";
 my $CONFIG_PATH = shift || usage();
 GetOptions('debug' => \$DEBUG);
 
