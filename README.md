@@ -11,7 +11,15 @@ This program is developed by [Yohei Yamaguchi](http://www.gologo13.com) when he 
 
 ## Installation
 
-- [Kyfd (the Kyoto Fst Decoder)](http://www.phontron.com/kyfd/)
+<pre>
+$ git clone git://github.com/gologo13/kkci2pron
+</pre>
+
+You must install [Kyfd (the Kyoto Fst Decoder)](http://www.phontron.com/kyfd/) before running kkci2pron.
+
+## Configuration
+
+Edit <strong>config.xml</strong> to setup kyfd before running the kkci2pron.pl.
 
 ## Usage
 
@@ -28,7 +36,7 @@ $ perl bin/kkci2pron.pl < sample.txt
 
 An input text must be the following format.
 
-> text := sentence + \n(newline_character) + sentence + … + sentence
+> text := sentence + \n(newline character) + sentence + … + sentence
 > sentence := unit + ' '(space) + unit + … + unit
 > unit := word + /(slash) + yomi
 > word := (Japanese Full-width Character)+
