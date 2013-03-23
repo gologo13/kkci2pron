@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<kyfd>
+    <!-- A file containing the input symbols -->
+    <arg name="isymbols" value="/home/yohei/ShigenKogaku/resource/KKCLogs/fst-based/output/in.sym" />
+
+    <!-- A file containing the output symbols (in OpenFst format) -->
+    <arg name="osymbols" value="/home/yohei/ShigenKogaku/resource/KKCLogs/fst-based/output/out.sym" />
+
+    <!-- The model that is to be used in decoding -->
+    <fst file="/home/yohei/ShigenKogaku/resource/KKCLogs/fst-based/output/lexicon.cmp" />
+    <fst file="/home/yohei/ShigenKogaku/resource/KKCLogs/fst-based/output/lm.cmp" />
+
+    <!-- A symbol that is appended to the end of every sentence for text input.
+         Default is <s>, but will be changed to null in a future version.       -->
+    <arg name="terminal" value="&lt;/s&gt;" />
+
+    <!-- The symbol to use when an unknown symbol is encountered (default <unk>).
+         Only applicable for text input. 
+         To ensure proper output, the unknown symbol must be passed as-is through the entire model. -->
+    <arg name="unknown" value="&lt;unk&gt;" />
+</kyfd>
