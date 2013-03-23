@@ -55,6 +55,6 @@ MIT License. Please see the LICENSE file for details.
 
 ## Reference
 
-山口 洋平、森 信介、河原 達也<br>
+\[1\]山口 洋平、森 信介、河原 達也<br>
 仮名漢字変換ログを用いた講義音声認識のための言語モデル適応<br>
 言語処理学会第18回年次大会(NLP2012)、広島、March 2012
