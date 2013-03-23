@@ -5,7 +5,7 @@ kkci2pron(Kana Kanji Conversion Input to Pronunciation)
 
 The <strong>kkci2pron</strong> converts a Japanese yomi, precisely Kana-Kanji conversion input, to a pronunciation.
 
-With this program, you can generate a speaking-style corpus from a writing-style corpus annotated with word boundaries and Japanese yomis, then can construct a speaking-stype language model. You can improve an accurary of a speech recogniton system by combining this language model and the domain-independent large corpus, i.e. [CSJ](http://www.ninjal.ac.jp/csj/).
+With this program, you can generate a speaking-style corpus from a writing-style corpus annotated with word boundaries and Japanese yomis, then can construct a speaking-stype language model. You can improve an accurary of a speech recogniton system by combining this language model and the domain-independent large corpus, i.e. [CSJ](http://www.ninjal.ac.jp/csj/). This is proven [1].
 
 This program is developed by [Yohei Yamaguchi](http://www.gologo13.com) when he was a graduate student. If you have an any question, please contact him.
 
