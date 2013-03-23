@@ -1,12 +1,11 @@
 ## Class to convert a pair of a word and yomi
-
 #!/usr/bin/env perl
 package KKCI2Pron::WordkkciConverter;
 
 use strict;
 use warnings;
-use Carp;
 use encoding 'utf-8';
+use Carp;
 
 our $DEBUG = 0;
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env perl
-
 use strict;
 use warnings;
 use File::Basename;
@@ -15,6 +14,10 @@ my $DEBUG = 0;
 
 my $CONFIG_PATH = shift || usage();
 GetOptions('debug' => \$DEBUG);
+
+$KKCI2Pron::PhonemeConverter::DEBUG = $DEBUG;
+$KKCI2Pron::KKCIConverter::DEBUG = $DEBUG;
+$KKCI2Pron::WordkkciConverter::DEBUG = $DEBUG;
 
 my $pConverter = KKCI2Pron::PhonemeConverter->new($CONFIG_PATH, $KYFD_PATH);
 my $kConverter = KKCI2Pron::KKCIConverter->new($pConverter);

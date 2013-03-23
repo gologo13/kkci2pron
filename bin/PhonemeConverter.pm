@@ -1,12 +1,11 @@
 ## Class to convert a kkci phoneme to a pronunciation phoneme
-
 #!/usr/bin/env perl
 package KKCI2Pron::PhonemeConverter;
 
 use strict;
 use warnings;
-use Carp;
 use encoding 'utf-8';
+use Carp;
 use IPC::Open2;
 
 our $DEBUG = 0;

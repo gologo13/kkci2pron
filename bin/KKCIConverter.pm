@@ -1,11 +1,12 @@
+## Class to convert a kkci to a pronunciation
 #!/usr/bin/env perl
 package KKCI2Pron::KKCIConverter;
 
 use strict;
 use warnings;
-use Carp;
 use feature qw(switch);
 use encoding 'utf-8';
+use Carp;
 use Storable qw(dclone);
 
 # constants
