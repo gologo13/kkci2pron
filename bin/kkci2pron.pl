@@ -8,15 +8,20 @@ use feature qw(switch say);
 use File::Basename;
 use Getopt::Long;
 use IPC::Open2;
-push(@INC, '.');
+use FindBin;
+use lib "$FindBin::Bin";
 use PhonemePron;
+#use Converter;
+
+my $KYFD_PATH = "/usr/local/bin/kyfd";
 
 # prepare kyfd
 my $config = shift || die "Usage: ".basename($0)." config.xml [ -debug ] < input > output\n";
 my $DEBUG = 0;
 GetOptions('debug' => \$DEBUG);
-(-e $config) or die "$config: $!";
-my $pid = open2(*Reader, *Writer, "kyfd $config 2>/dev/null");
+die "$config: $!" if (! -e $config);
+die "kyfd must be installed: $!" if (! -x $KYFD_PATH);
+my $pid = open2(my $Reader, my $Writer, "kyfd $config 2>/dev/null");
 
 # declare the concreate translation function
 # in this case, translate by using kyfd
@@ -25,8 +30,8 @@ my $translate_phoneme_by_fst = sub {
     my ($kkci_phoneme) = @_;
 
     # get the output from kyfd
-    print Writer "$$kkci_phoneme\n";
-    my $baseform_phoneme = <Reader>;
+    print $Writer "$$kkci_phoneme\n";
+    my $baseform_phoneme = <$Reader>;
     chomp($baseform_phoneme);
     $baseform_phoneme = join(' ', map { (split(/\+/))[1] } split(/\s/, $baseform_phoneme));
 
@@ -40,8 +45,8 @@ my $translate_phoneme_by_fst = sub {
 
     return $baseform_phoneme;
 };
-$PhonemePron::translate_phoneme_proto = $translate_phoneme_by_fst;
-$PhonemePron::DEBUG = $DEBUG;
+$KKCI2Pron::PhonemePron::translate_phoneme_proto = $translate_phoneme_by_fst;
+$KKCI2Pron::PhonemePron::DEBUG = $DEBUG;
 
 # main loop
 while (<STDIN>) {
@@ -61,7 +66,7 @@ while (<STDIN>) {
                     when (["。", "．"]) { $elem = "$word/$kkci"; }
                     default {
                         if ($DEBUG) { warn "word=$word, kkci=$kkci"; }
-                        my $pron = $PhonemePron::kkci2pron->(\$kkci);
+                        my $pron = $KKCI2Pron::PhonemePron::kkci2pron->(\$kkci);
                         $elem = "$word/$pron";
                     }
                 }

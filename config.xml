@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <kyfd>
     <!-- A file containing the input symbols -->
-    <arg name="isymbols" value="/home/yohei/ShigenKogaku/resource/KKCLogs/fst-based/output/in.sym" />
+    <arg name="isymbols" value="/Users/yohei/dev/kkci2pron/data/in.sym" />
 
     <!-- A file containing the output symbols (in OpenFst format) -->
-    <arg name="osymbols" value="/home/yohei/ShigenKogaku/resource/KKCLogs/fst-based/output/out.sym" />
+    <arg name="osymbols" value="/Users/yohei/dev/kkci2pron/data/out.sym" />
 
     <!-- The model that is to be used in decoding -->
-    <fst file="/home/yohei/ShigenKogaku/resource/KKCLogs/fst-based/output/lexicon.cmp" />
-    <fst file="/home/yohei/ShigenKogaku/resource/KKCLogs/fst-based/output/lm.cmp" />
+    <fst file="/Users/yohei/dev/kkci2pron/data/lexicon.cmp" />
+    <fst file="/Users/yohei/dev/kkci2pron/data/lm.cmp" />
 
     <!-- A symbol that is appended to the end of every sentence for text input.
          Default is <s>, but will be changed to null in a future version.       -->

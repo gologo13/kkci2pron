@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-package PhonemePron;
+package KKCI2Pron::PhonemePron;
 
 use strict;
 use warnings;
@@ -25,6 +25,30 @@ our $DEBUG = 0;
 
 our $translate_phoneme_proto = sub {
     croak "error: translate_phoneme_proto isn't set up yet.";
+};
+
+our $wordkkci2pron = sub {
+    (@_ == 2) or croak $!;
+    my ($word, $kkci) = @_;
+    my $elem;
+    given ("$word/$kkci") {
+        # 助詞: 「は」、「へ」、「を」
+        when ('は/ハ') { $elem = "は/ワ"; }
+        when ('へ/ヘ') { $elem = "へ/エ"; }
+        when ('を/ヲ') { $elem = "を/オ"; }
+        default {
+            given ($kkci) {
+                when (["、", "，"]) { $elem = "$word/$kkci"; }
+                when (["。", "．"]) { $elem = "$word/$kkci"; }
+                default {
+                    #if ($DEBUG) { warn "word=$word, kkci=$kkci"; }
+                    my $pron = $KKCI2Pron::kkci2pron->(\$kkci);
+                    $elem = "$word/$pron";
+                }
+            }
+        }
+    }
+    return $elem;
 };
 
 # convert KKCI to pronunciation with the specified converter
