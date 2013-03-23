@@ -19,7 +19,7 @@ You must install [Kyfd (the Kyoto Fst Decoder)](http://www.phontron.com/kyfd/) b
 
 ## Configuration
 
-Edit <strong>config.xml</strong> to setup kyfd before running the kkci2pron.pl.
+Edit <strong>config.xml</strong> to setup kyfd before running the kkci2pron.
 
 ## Usage
 
@@ -34,7 +34,7 @@ $ perl bin/kkci2pron.pl ＜ sample.txt
 
 ## Input Format
 
-An input text must be the following format.
+An input text must follow the following format.
 
 > text := sentence + \n(newline character) + sentence + … + sentence
 > 
