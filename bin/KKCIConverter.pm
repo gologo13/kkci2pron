@@ -1,82 +1,92 @@
 #!/usr/bin/env perl
-package KKCI2Pron::PhonemePron;
+package KKCI2Pron::KKCIConverter;
 
 use strict;
 use warnings;
 use Carp;
-use feature qw(switch say);
+use feature qw(switch);
 use encoding 'utf-8';
 use Storable qw(dclone);
 
-## constants
-# type of the value translate_phoneme returns
-my $TYPES = {
+# constants
+our $DEBUG = 0;
+my $TYPE = {
     'CONVERTED'     => 0,
     'NOT_CONVERTED' => 1,
     'NA'            => 2
 };
-
 my @INCOMPLETE_CHARS = qw/ァ ィ ゥ ェ ォ ャ ュ ョ ー/;
 my %INCOMPLETE_CHARS = map { $_ => 1 } @INCOMPLETE_CHARS;
 
-## variables
-# debug flag
-our $DEBUG = 0;
+# Constructor
+#
+# @param Mixed a converter to convert a phoneme
+sub new {
+  my $class = shift;
+  (@_ == 1) or die $!;
+  my $instances = {
+      'converter' => shift
+  };
+  bless $instances, $class;
+}
 
-our $translate_phoneme_proto = sub {
-    croak "error: translate_phoneme_proto isn't set up yet.";
-};
-
-our $wordkkci2pron = sub {
-    (@_ == 2) or croak $!;
-    my ($word, $kkci) = @_;
-    my $elem;
-    given ("$word/$kkci") {
-        # 助詞: 「は」、「へ」、「を」
-        when ('は/ハ') { $elem = "は/ワ"; }
-        when ('へ/ヘ') { $elem = "へ/エ"; }
-        when ('を/ヲ') { $elem = "を/オ"; }
-        default {
-            given ($kkci) {
-                when (["、", "，"]) { $elem = "$word/$kkci"; }
-                when (["。", "．"]) { $elem = "$word/$kkci"; }
-                default {
-                    #if ($DEBUG) { warn "word=$word, kkci=$kkci"; }
-                    my $pron = $KKCI2Pron::kkci2pron->(\$kkci);
-                    $elem = "$word/$pron";
-                }
-            }
-        }
-    }
-    return $elem;
-};
-
-# convert KKCI to pronunciation with the specified converter
-our $kkci2pron = sub {
+# convert a KKCI to a pronunciation with the specified converter
+#
+# @param String a reference of a kkci
+# @return String a pronunciation
+sub convert {
+    my $self = shift;
     (@_ == 1) or croak $!;
     my ($ref_kkci) = @_;
     my $kkci_phoneme = yomi2phoneme($$ref_kkci);
-    my ($type, $pron_phoneme) = translate_phoneme(\$kkci_phoneme);
+    my ($type, $pron_phoneme) = $self->translate_phoneme(\$kkci_phoneme);
 
     my ($ret);
     given ($type) {
-        when ($TYPES->{CONVERTED}) {
+        when ($TYPE->{CONVERTED}) {
             my $pron = phoneme2yomi($pron_phoneme);
             if ($DEBUG) { carp "$$ref_kkci -> $kkci_phoneme -> $pron_phoneme -> $pron"; }
             $pron =~ s/\ //g;
             $ret = $pron;
         }
-        when ($TYPES->{NOT_CONVERTED}) { $ret = $$ref_kkci; }
-        when ($TYPES->{NA})            { $ret = "NA"; }
+        when ($TYPE->{NOT_CONVERTED}) { $ret = $$ref_kkci; }
+        when ($TYPE->{NA})            { $ret = "NA"; }
         default { croak "kkci2pron: $!"; }
     }
     if ($DEBUG) { carp "\n"; }
     return $ret;
 };
 
+# wrapper function for translating phoneme
+#
+# @param String a reference of a phoneme
+# @return String a pair of the type of return-value and the translated phoneme
+sub translate_phoneme {
+    my $self = shift;
+    my $ref_phoneme = shift || croak $!;
+
+    my ($type, $phoneme);
+    if (!validate_phoneme($ref_phoneme)) {
+        # 数詞や非発音記号
+        ($type, $phoneme) = ($TYPE->{NA}, "NA");
+    } else {
+        my $ref_src = dclone($ref_phoneme);
+        my $dst = $self->{converter}->convert($ref_src);
+        if ($$ref_src ne $dst) {
+            ($type, $phoneme) = ($TYPE->{CONVERTED}, $dst);
+        } else {
+            ($type, $phoneme) = ($TYPE->{NOT_CONVERTED}, $$ref_phoneme);
+        }
+    }
+    if ($DEBUG) { carp "type=$type, phoneme=$phoneme"; }
+    return ($type, $phoneme);
+}
+
+
 # check if the phoneme is valid or not
-# return 1 if it is valid
-# return 0 if it isn't valid
+#
+# @param String a reference of phoneme
+# @return Boolean 1 if it is valid. 0 if it isn't valid
 sub validate_phoneme {
     my $ref_phoneme = shift || croak $!;
     return ($$ref_phoneme =~ /^([a-zA-Z:]|\s)+$/
@@ -84,54 +94,18 @@ sub validate_phoneme {
 }
 
 # check if the yomi is valid or not
-# return 1 if it is valid
-# return 0 if it isn't valid
+#
+# @param String a yomi
+# @return 1 if it is valid. 0 if it isn't valid
 sub validate_yomi {
     my $ref_yomi = shift || croak $!;
     return ($$ref_yomi =~ /^([ァ-ンヴ|ー|\s]+)$/);
 }
 
-# segment a yomi in appropriate units
-sub segment_yomi {
-    (@_ == 1) or croak $!;
-    my $chars = shift;
-    my @chars = split(//, $chars);
-    my $ret = $chars[0];
-    for my $i (1 .. $#chars) {
-        if (!defined( $INCOMPLETE_CHARS{$chars[$i]} )) {
-            $ret .= " ".$chars[$i];
-        } else {
-            $ret .= $chars[$i];
-        }
-    }
-    return $ret;
-}
-
-#-------------------don't use these functions below here----------------------------
-
-# wrapper function for translating phoneme
-# return a pair of the type of return-value and the translated phoneme
-sub translate_phoneme {
-    my $ref_phoneme = shift || croak $!;
-
-    my ($type, $phoneme);
-    if (!validate_phoneme($ref_phoneme)) {
-        # 数詞や非発音記号
-        ($type, $phoneme) = ($TYPES->{NA}, "NA");
-    } else {
-        my $ref_src = dclone($ref_phoneme);
-        my $dst = $translate_phoneme_proto->($ref_src);
-        if ($$ref_src ne $dst) {
-            ($type, $phoneme) = ($TYPES->{CONVERTED}, $dst);
-        } else {
-            ($type, $phoneme) = ($TYPES->{NOT_CONVERTED}, $$ref_phoneme);
-        }
-    }
-    if ($DEBUG) { carp "type=$type, phoneme=$phoneme"; }
-    return ($type, $phoneme);
-}
-
-# convert pronunciation to phoneme
+# convert a pronunciation to a phoneme
+#
+# @param String a yomi
+# @return String a phoneme
 sub yomi2phoneme {
     (@_ == 1) or croak $!;
 
@@ -321,7 +295,10 @@ sub yomi2phoneme {
     return $yomi;
 }
 
-# convert phoneme to pronunciation
+# convert a phoneme to a pronunciation
+#
+# @param String a phoneme
+# @return String a pronunciation
 sub phoneme2yomi {
     (@_ == 1) or croak $!;
     my $phoneme = shift;
