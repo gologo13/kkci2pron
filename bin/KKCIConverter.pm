@@ -54,7 +54,7 @@ sub convert {
         when ($TYPE->{NA})            { $ret = "NA"; }
         default { croak "kkci2pron: $!"; }
     }
-    if ($DEBUG) { carp "\n"; }
+    if ($DEBUG) { warn "\n"; }
     return $ret;
 };
 
