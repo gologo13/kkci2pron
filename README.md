@@ -36,11 +36,11 @@ $ perl bin/kkci2pron.pl ＜ sample.txt
 
 An input text must follow the following format.
 
-> text := sentence + \n(newline character) + sentence + … + sentence
+> text := sentence + '\n'(newline character) + sentence + … + sentence
 > 
 > sentence := unit + ' '(space) + unit + … + unit
 > 
-> unit := word + /(slash) + yomi
+> unit := word + '/'(slash) + yomi
 > 
 > word := (Japanese Full-width Character)+
 > 
